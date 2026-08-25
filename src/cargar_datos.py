@@ -1,4 +1,3 @@
- certification
 import os
 import pandas as pd
 def cargarDatos():
@@ -69,4 +68,3 @@ def cargar_base_datos():
 
 if __name__ == "__main__":
     datos = cargar_base_datos()
- main
