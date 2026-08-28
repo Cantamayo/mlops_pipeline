@@ -50,3 +50,11 @@ La detección temprana de variaciones en la variable `tipo_laboral` es un indica
 1.  Pausar temporalmente las predicciones completamente automatizadas para la población afectada.
 2.  Desviar los casos de los nuevos perfiles laborales a analistas de crédito humanos (Revisión Manual).
 3.  Iniciar un ciclo de **Retraining** (reentrenamiento) del modelo LightGBM incluyendo el nuevo lote de datos de producción, permitiéndole aprender los patrones de riesgo de las nuevas distribuciones laborales.
+
+## 6. Despliegue en Producción (Avance 4)
+
+Para disponibilizar el modelo predictivo y permitir su consumo automatizado por otras aplicaciones (como el sistema central de evaluación de créditos), se diseñó e implementó una arquitectura de microservicios:
+
+*   **Serialización del Pipeline:** El modelo campeón (LightGBM) fue empaquetado junto con todo su flujo de transformaciones (Feature Engineering) en un artefacto `.pkl` utilizando `joblib`. Esto asegura que los nuevos datos crudos que ingresen al sistema pasen exactamente por las mismas transformaciones matemáticas sin requerir intervención manual.
+*   **API RESTful (FastAPI):** Se desarrolló una interfaz de programación de aplicaciones (API) de alto rendimiento utilizando **FastAPI** y **Uvicorn**. El endpoint de inferencia (`/predict`) está optimizado para soportar predicciones por lotes (Batch), recibiendo payloads en formato JSON y devolviendo la etiqueta final del cliente (Riesgo / A tiempo) junto con su respectiva probabilidad de impago.
+*   **Contenerización (Docker):** Para garantizar la reproducibilidad, portabilidad y aislamiento del entorno, la aplicación fue completamente dockerizada. Se configuró un `Dockerfile` optimizado bajo una imagen ligera (`python:3.9-slim`), junto con reglas estrictas en `.dockerignore`, dejando el microservicio listo para ser orquestado y desplegado en cualquier entorno de nube.
