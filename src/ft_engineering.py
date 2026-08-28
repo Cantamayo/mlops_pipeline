@@ -37,6 +37,9 @@ def crear_variables_nuevas(df):
     return df_der
 
 # --- 3. PIPELINE DE TRANSFORMACIÓN ---
+def convertir_a_string(x):
+    return x.astype(str)
+
 def ft_engineering(X):
     # Variables sesgadas que requieren np.log1p según EDA
     # (Añadimos total_otros_prestamos por su altísima varianza en la tabla)
@@ -62,10 +65,10 @@ def ft_engineering(X):
 
     # Ruta 3: Categóricas (OneHotEncoder exigido en el EDA)
     cat_transformer = Pipeline(steps=[
-        ('to_str', FunctionTransformer(lambda x: x.astype(str))),
-        ('imputer', SimpleImputer(strategy='most_frequent')),
-        ('onehot', OneHotEncoder(handle_unknown='ignore', sparse_output=False))
-    ])
+    ('to_str', FunctionTransformer(convertir_a_string)),
+    ('imputer', SimpleImputer(strategy='most_frequent')),
+    ('onehot', OneHotEncoder(handle_unknown='ignore', sparse_output=False))
+])
 
     preprocessor = ColumnTransformer(
         transformers=[
